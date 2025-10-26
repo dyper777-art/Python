@@ -28,3 +28,4 @@ tzdata
 urllib3<2.0
 gunicorn
 psycopg2-binary
+whitenoise

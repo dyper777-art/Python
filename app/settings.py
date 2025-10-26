@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'task',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -190,3 +192,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "dyper777@gmail.com"
 EMAIL_HOST_PASSWORD = "dqsy nhxo uwed nvsy"
 DEFAULT_FROM_EMAIL = "Admin"
+
+
+# Enable gzip for better performance
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
