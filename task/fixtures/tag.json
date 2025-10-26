@@ -1,0 +1,77 @@
+[
+  {
+    "model": "task.tag",
+    "pk": 1,
+    "fields": { "label": "Urgent" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 2,
+    "fields": { "label": "Important" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 3,
+    "fields": { "label": "Optional" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 4,
+    "fields": { "label": "Home" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 5,
+    "fields": { "label": "Office" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 6,
+    "fields": { "label": "Shopping" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 7,
+    "fields": { "label": "Workout" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 8,
+    "fields": { "label": "Study" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 9,
+    "fields": { "label": "Bills" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 10,
+    "fields": { "label": "Cleaning" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 11,
+    "fields": { "label": "Reading" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 12,
+    "fields": { "label": "Entertainment" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 13,
+    "fields": { "label": "Health" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 14,
+    "fields": { "label": "Finance" }
+  },
+  {
+    "model": "task.tag",
+    "pk": 15,
+    "fields": { "label": "Appointments" }
+  }
+]

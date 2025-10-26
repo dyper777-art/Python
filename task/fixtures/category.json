@@ -1,0 +1,82 @@
+[
+  {
+    "model": "task.category",
+    "pk": 1,
+    "fields": {
+      "name": "Work",
+      "hex_color": "#FF5733"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 2,
+    "fields": {
+      "name": "Personal",
+      "hex_color": "#33CFFF"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 3,
+    "fields": {
+      "name": "Fitness",
+      "hex_color": "#85FF33"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 4,
+    "fields": {
+      "name": "Shopping",
+      "hex_color": "#FF33EC"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 5,
+    "fields": {
+      "name": "Travel",
+      "hex_color": "#FF8F33"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 6,
+    "fields": {
+      "name": "Study",
+      "hex_color": "#8D33FF"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 7,
+    "fields": {
+      "name": "Finance",
+      "hex_color": "#33FFB5"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 8,
+    "fields": {
+      "name": "Health",
+      "hex_color": "#33FF57"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 9,
+    "fields": {
+      "name": "Entertainment",
+      "hex_color": "#FFC733"
+    }
+  },
+  {
+    "model": "task.category",
+    "pk": 10,
+    "fields": {
+      "name": "Chores",
+      "hex_color": "#FF3333"
+    }
+  }
+]
