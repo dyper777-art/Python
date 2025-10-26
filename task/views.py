@@ -249,20 +249,20 @@ class VerifyEmail(APIView):
     def get(self, request, token):
         return Response({"message": f"Email verified successfully! Token: {token}"})
     
+User = get_user_model()
 
 import os
 from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
-import resend
 
 User = get_user_model()
 
 def activate_user(request, uid, token):
     try:
-        uid_decoded = urlsafe_base64_decode(uid).decode()
-        user = User.objects.get(pk=uid_decoded)
+        uid = urlsafe_base64_decode(uid).decode()
+        user = User.objects.get(pk=uid)
     except (User.DoesNotExist, ValueError, TypeError, OverflowError):
         return JsonResponse({'detail': 'Invalid activation link'}, status=400)
 
@@ -271,100 +271,14 @@ def activate_user(request, uid, token):
             user.is_active = True
             user.save()
 
-            # Get current host from environment
-            current_host = os.environ.get("CURRENT_HOST")
-            activation_url = f"{current_host}/api/verify-email/{uid}/{token}/"
-
-            # Set Resend API key from environment
-            resend.api_key = os.environ.get("RESEND_API_KEY")
-
-            # Send activation email via Resend
-            try:
-                email_params = {
-                    "from": "Acme <onboarding@resend.dev>",
-                    "to": "dyper777@gmail.com",
-                    "subject": "Activate Your Account",
-                    "html": (
-                        f"<p>Hello {user.username},</p>"
-                        f"<p>Your account has been activated successfully!</p>"
-                        f"<p>You can verify your email or log in here:</p>"
-                        f"<p><a href='{activation_url}'>{activation_url}</a></p>"
-                        f"<p>If you didn’t request this, ignore this email.</p>"
-                    ),
-                }
-                sent_email = resend.Emails.send(email_params)
-                email_id = sent_email["id"]
-            except Exception as e:
-                return JsonResponse({'detail': f'Account activated but failed to send email: {e}'}, status=500)
+            activation_path = f"/api/auth/activate/{uid}/{token}/"
+            activation_url = request.build_absolute_uri(activation_path) if request else f"{activation_path}"
 
             return JsonResponse({
                 'detail': f'{user.username} account has been activated successfully.',
-                'activation_url': activation_url,
-                'email_id': email_id
+                'activation_url': activation_url
             }, status=200)
-
         else:
             return JsonResponse({'detail': 'Account already activated.'}, status=200)
-
     else:
         return JsonResponse({'detail': 'Activation link is invalid or expired.'}, status=400)
-    
-
-
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-import resend, os
-from .serializers import ST5UserCreateSerializer, ST5UserSerializer
-
-User = get_user_model()
-
-
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = ST5UserSerializer  # default for list/retrieve
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return ST5UserCreateSerializer
-        return ST5UserSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save(is_active=False)  # keep inactive until verification
-
-        # --- generate activation link ---
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        current_host = os.environ.get("CURRENT_HOST", "http://localhost:8000")
-        activation_url = f"{current_host}/api/auth/activate/{uid}/{token}/"
-
-        # --- configure Resend API ---
-        resend.api_key = os.environ.get("RESEND_API_KEY")
-
-        try:
-            email_params = {
-                "from": "Acme <onboarding@resend.dev>",  # must be verified
-                "to": [user.email],
-                "subject": "Activate Your Account",
-                "html": (
-                    f"<p>Hello {user.username},</p>"
-                    f"<p>Click below to activate your account:</p>"
-                    f"<p><a href='{activation_url}'>{activation_url}</a></p>"
-                ),
-            }
-            sent_email = resend.Emails.send(email_params)
-        except Exception as e:
-            return Response(
-                {"detail": f"User created but failed to send email: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-        return Response(
-            {"detail": f"Activation email sent to {user.email}."},
-            status=status.HTTP_201_CREATED,
-        )
