@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
         params = {
             "from": "Acme <onboarding@resend.dev>",  # or your verified domain
-            "to": ["your_email@example.com"],
+            "to": ["dyper777@gmail.com"],
             "subject": "Hello from Railway",
             "html": "<p>This email works!</p>",
         }
