@@ -33,11 +33,11 @@ from rest_framework.routers import DefaultRouter
 #     path('api/auth/', include('djoser.urls.jwt')),
 # ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-router = DefaultRouter()
-router.register(r"users", CustomUserViewSet, basename="custom-user")  # note: no 'auth/' prefix
+# router = DefaultRouter()
+# router.register(r"users", CustomUserViewSet, basename="custom-user")  # note: no 'auth/' prefix
 
 urlpatterns = [
-    path('api/auth/', include(router.urls)),  # <-- your custom viewset first
+    path('api/auth/', include('task.routes')),  # <-- your custom viewset first
     path('api/auth/', include('djoser.urls')),  # Djoser fallback
     path('api/auth/', include('djoser.urls.jwt')),
     path('admin/', admin.site.urls),
