@@ -176,7 +176,7 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
-    'SEND_ACTIVATION_EMAIL': True,
+    # 'SEND_ACTIVATION_EMAIL': True,
     'ACTIVATION_URL': 'api/auth/activate/{uid}/{token}/',
     'LOGIN_FIELD': 'email',
     'EMAIL': {
