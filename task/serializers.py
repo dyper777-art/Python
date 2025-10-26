@@ -36,7 +36,7 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         # Generate email activation token
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        activation_path = f"/api/auth/activate/{uid}/{token}/"
+        activation_path = f"/auth/activate/{uid}/{token}/"
         activation_url = request.build_absolute_uri(activation_path) if request else f"{activation_path}"
 
         # Send email via Resend
