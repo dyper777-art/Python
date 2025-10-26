@@ -47,6 +47,6 @@ urlpatterns = [
     # path('contact', views.contact),
     path("tasks/", TaskGeneric.as_view()),
     path("tasks/<int:pk>/", TaskDetailGenetic.as_view()),
-    path('auth/activate/<uid>/<token>/', activate_user, name='verify_email'),
+    path('activate/<uid>/<token>/', activate_user, name='verify_email'),
     path('verify-email/<uuid:token>/', VerifyEmail.as_view(), name='verify-email'),
 ]
