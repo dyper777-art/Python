@@ -1,17 +1,17 @@
+# management/commands/send_test_email.py
 from django.core.management.base import BaseCommand
-import smtplib
+from resend import Resend
+from django.conf import settings
 
 class Command(BaseCommand):
-    help = "Check SMTP server connectivity"
+    help = 'Send a test email via Resend'
 
     def handle(self, *args, **kwargs):
-        host = "smtp.gmail.com"
-        port = 587
-
-        try:
-            server = smtplib.SMTP(host, port, timeout=10)
-            server.starttls()
-            server.quit()
-            self.stdout.write(self.style.SUCCESS(f"SMTP {host}:{port} is reachable!"))
-        except Exception as e:
-            self.stderr.write(self.style.ERROR(f"Failed to connect: {e}"))
+        client = Resend(settings.RESEND_API_KEY)
+        client.emails.send(
+            from_="you@yourdomain.com",
+            to=["recipient@gmail.com"],
+            subject="Hello from Railway",
+            html="<p>This email works!</p>",
+        )
+        self.stdout.write(self.style.SUCCESS('Email sent!'))
