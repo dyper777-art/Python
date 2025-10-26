@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
         # Prepare email params
         params: resend.Emails.SendParams = {
-            "from": "dyper777@gmail.com",
+            "from": "Acme <onboarding@resend.dev>",
             "to": ["dyper777@gmail.com"],
             "subject": "Hello from Railway",
             "html": "<p>This email works!</p>",
