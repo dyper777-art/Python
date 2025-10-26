@@ -25,8 +25,8 @@ router = DefaultRouter()
 router.register(r"auth/users", CustomUserViewSet, basename="custom-user")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/', include('task.routes')),
+    path('admin/', admin.site.urls),
     # path('task/', include('task.routes')),
     # Djoser authentication routes
     path('api/auth/', include('djoser.urls')),
