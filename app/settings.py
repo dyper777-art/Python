@@ -191,9 +191,9 @@ DJOSER = {
 
 
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_BACKEND = "emails.resend_backend.ResendEmailBackend"
+EMAIL_BACKEND = "emails.resend_backend.ResendEmailBackend"
 # EMAIL_BACKEND = 'emails.backends.smtp.EmailBackend'
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
