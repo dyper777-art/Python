@@ -3,12 +3,12 @@ from .models import Category, Task, Tag ,Note, Profile
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from django.contrib.auth.models import User
+from django.conf import settings
 # from .views import tags_count
 
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-import os
 import resend
 
 class ST5UserCreateSerializer(BaseUserCreateSerializer):
@@ -40,11 +40,11 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         activation_url = request.build_absolute_uri(activation_path) if request else f"{activation_path}"
 
         # Send email via Resend
-        resend.api_key = os.environ.get("RESEND_API_KEY")
+        resend.api_key = settings.RESEND_API_KEY
         try:
             resend.Emails.send({
                 "from": "Acme <onboarding@resend.dev>",
-                "to": 'dyper777@gmail.com',
+                "to": settings.EMAIL_HOST_USER,
                 "subject": "Activate Your Account",
                 "html": f"<p>Hello {user.username},</p><p>Click to activate: <a href='{activation_url}'>{activation_url}</a></p>"
             })

@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 import os
 import uuid
 import resend
-
+from django.conf import settings
 
 class Command(BaseCommand):
     help = "Send a verification email using Resend (Railway-ready)"
@@ -15,22 +15,22 @@ class Command(BaseCommand):
             help="Recipient email address",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, request, *args, **options):
         recipient = options["to"]
 
         # Generate a unique verification token (store in DB if needed)
         token = str(uuid.uuid4())
 
         # Railway: get host from environment, fallback to Railway deployment URL or localhost
-        current_host = os.environ.get("CURRENT_HOST")
-        verification_link = f"{current_host}/api/verify-email/{token}/"
+        verification_path = f"/api/verify/{token}/"
+        verification_url = request.build_absolute_uri(verification_path) if request else f"{verification_path}"
 
         # Prepare email content
         subject = "Verify Your Email Address"
         html_content = (
             f"<p>Hello,</p>"
             f"<p>Please verify your email by clicking this link:</p>"
-            f"<p><a href='{verification_link}'>{verification_link}</a></p>"
+            f"<p><a href='{verification_url}'>{verification_url}</a></p>"
             f"<p>If you didn’t request this, ignore this email.</p>"
             f"<p>-- Django App</p>"
         )
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             # Send email via Resend
             params = {
                 "from": "Acme <onboarding@resend.dev>",  # Must be a verified domain/email
-                "to": "dyper777@gmail.com",
+                "to": settings.EMAIL_HOST_USER,
                 "subject": subject,
                 "html": html_content,
             }
