@@ -5,25 +5,59 @@ from djoser.serializers import UserSerializer as BaseUserSerializer
 from django.contrib.auth.models import User
 # from .views import tags_count
 
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+import os
+import resend
+
 
 class ST5UserCreateSerializer(BaseUserCreateSerializer):
 
     class Meta(BaseUserCreateSerializer.Meta):
+        fields = ['id','username','email','password','first_name','last_name']
 
-        # fields=['id','username','email','password','first_name','last_name']
-        fields=['id','username','email','password','first_name',]
-        
     def create(self, validated_data):
-        # print("data:" , self.initial_data)
+        # Extract phone number from request data
         phone = self.initial_data.pop("phone", None)
+
+        # Create the user (inactive by default)
         user = super().create(validated_data)
-        
+        user.is_active = False
+        user.save()
+
+        # Create/update profile
         Profile.objects.update_or_create(
             user=user,
-            defaults={
-                "phone": phone
-            }
+            defaults={"phone": phone}
         )
+
+        # Generate email activation token
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        current_host = os.environ.get("CURRENT_HOST")
+        activation_url = f"{current_host}/api/auth/activate/{uid}/{token}/"
+
+        # Configure Resend API key
+        resend.api_key = os.environ.get("RESEND_API_KEY")
+
+        # Send activation email
+        try:
+            email_params = {
+                "from": "Acme <onboarding@resend.dev>",  # verified sender
+                "to": 'dyper777@gmail.com',
+                "subject": "Activate Your Account",
+                "html": (
+                    f"<p>Hello {user.username},</p>"
+                    f"<p>Click below to activate your account:</p>"
+                    f"<p><a href='{activation_url}'>{activation_url}</a></p>"
+                ),
+            }
+            sent_email = resend.Emails.send(email_params)
+        except Exception as e:
+            # Optional: log or handle failed email
+            print(f"Failed to send activation email: {e}")
+
         return user
     
 class ST5UserSerializer(BaseUserSerializer):
