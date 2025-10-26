@@ -318,33 +318,37 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 import resend, os
-from djoser.serializers import UserCreateSerializer
+from .serializers import ST5UserCreateSerializer, ST5UserSerializer
 
 User = get_user_model()
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
+    serializer_class = ST5UserSerializer  # default for list/retrieve
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return ST5UserCreateSerializer
+        return ST5UserSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save(is_active=False)  # keep user inactive until email verified
+        user = serializer.save(is_active=False)  # keep inactive until verification
 
-        # Generate activation token and link
+        # --- generate activation link ---
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        current_host = os.environ.get("CURRENT_HOST")
+        current_host = os.environ.get("CURRENT_HOST", "http://localhost:8000")
         activation_url = f"{current_host}/api/auth/activate/{uid}/{token}/"
 
-        # Configure Resend
+        # --- configure Resend API ---
         resend.api_key = os.environ.get("RESEND_API_KEY")
 
-        # Send email via Resend
         try:
             email_params = {
-                "from": "Acme <onboarding@resend.dev>",  # replace with verified domain if needed
+                "from": "Acme <onboarding@resend.dev>",  # must be verified
                 "to": [user.email],
                 "subject": "Activate Your Account",
                 "html": (
