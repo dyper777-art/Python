@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 from django.conf import settings
 import uuid
+import os
 
 class Command(BaseCommand):
     help = "Send a verification email using Gmail SMTP"
@@ -14,7 +15,10 @@ class Command(BaseCommand):
 
         # Generate a unique token (you can store this in DB if needed)
         token = uuid.uuid4()
-        verification_link = f"http://127.0.0.1:8000/api/verify-email/{token}/"
+
+        # Use environment variable for host, fallback to localhost
+        current_host = os.environ.get("CURRENT_HOST")
+        verification_link = f"{current_host}/api/verify-email/{token}/"
 
         subject = "Verify Your Email Address"
         message = (
@@ -35,6 +39,5 @@ class Command(BaseCommand):
                 fail_silently=False,
             )
             self.stdout.write(self.style.SUCCESS("Verification email sent successfully!"))
-            # self.stdout.write(self.style.HTTP_INFO(f"Token: {token}"))  # optional
         except Exception as e:
             self.stderr.write(self.style.ERROR(f"Failed to send email: {e}"))

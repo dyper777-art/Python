@@ -251,6 +251,14 @@ class VerifyEmail(APIView):
     
 User = get_user_model()
 
+import os
+from django.http import JsonResponse
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 def activate_user(request, uid, token):
     try:
         uid = urlsafe_base64_decode(uid).decode()
@@ -262,7 +270,14 @@ def activate_user(request, uid, token):
         if not user.is_active:
             user.is_active = True
             user.save()
-            return JsonResponse({'detail': f'{user.username} account has been activated successfully.'}, status=200)
+
+            current_host = os.environ.get("CURRENT_HOST")
+            activation_url = f"{current_host}/api/verify-email/{uid}/{token}/"
+
+            return JsonResponse({
+                'detail': f'{user.username} account has been activated successfully.',
+                'activation_url': activation_url
+            }, status=200)
         else:
             return JsonResponse({'detail': 'Account already activated.'}, status=200)
     else:
