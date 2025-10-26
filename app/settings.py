@@ -191,7 +191,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "dyper777@gmail.com"
 EMAIL_HOST_PASSWORD = "dqsy nhxo uwed nvsy"
-DEFAULT_FROM_EMAIL = "Admin"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # Enable gzip for better performance
