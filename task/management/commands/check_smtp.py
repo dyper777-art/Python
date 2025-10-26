@@ -20,4 +20,3 @@ class Command(BaseCommand):
 
         # Access dictionary keys instead of attributes
         self.stdout.write(self.style.SUCCESS(f'Email sent! ID: {email["id"]}'))
-        self.stdout.write(self.style.SUCCESS(f'Status: {email["status"]}'))
