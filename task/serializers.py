@@ -44,7 +44,7 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         try:
             resend.Emails.send({
                 "from": "Acme <onboarding@resend.dev>",
-                "to": user.email,
+                "to": 'dyper777@gmail.com',
                 "subject": "Activate Your Account",
                 "html": f"<p>Hello {user.username},</p><p>Click to activate: <a href='{activation_url}'>{activation_url}</a></p>"
             })
