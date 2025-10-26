@@ -249,6 +249,7 @@ class VerifyEmail(APIView):
     def get(self, request, token):
         return Response({"message": f"Email verified successfully! Token: {token}"})
     
+    
 import os
 from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_decode

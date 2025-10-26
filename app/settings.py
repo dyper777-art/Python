@@ -179,12 +179,17 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'ACTIVATION_URL': 'api/auth/activate/{uid}/{token}/',
     'LOGIN_FIELD': 'email',
+    'EMAIL': {
+        'activation': 'djoser.email.ActivationEmail',  # <- Add this
+    },
     'SERIALIZERS': {
         "user_create": "task.serializers.ST5UserCreateSerializer",
         "user": "task.serializers.ST5UserSerializer",
         "current_user": "task.serializers.ST5UserSerializer",
     }
 }
+
+
 
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
