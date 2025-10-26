@@ -21,16 +21,26 @@ from django.conf.urls.static import static
 from task.views import CustomUserViewSet
 from rest_framework.routers import DefaultRouter
 
+# router = DefaultRouter()
+# router.register(r"auth/users", CustomUserViewSet, basename="custom-user")
+
+# urlpatterns = [
+#     path('api/', include('task.routes')),
+#     path('admin/', admin.site.urls),
+#     # path('task/', include('task.routes')),
+#     # Djoser authentication routes
+#     path('api/auth/', include('djoser.urls')),
+#     path('api/auth/', include('djoser.urls.jwt')),
+# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 router = DefaultRouter()
-router.register(r"auth/users", CustomUserViewSet, basename="custom-user")
+router.register(r"users", CustomUserViewSet, basename="custom-user")  # note: no 'auth/' prefix
 
 urlpatterns = [
-    path('api/', include('task.routes')),
-    path('admin/', admin.site.urls),
-    # path('task/', include('task.routes')),
-    # Djoser authentication routes
-    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include(router.urls)),  # <-- your custom viewset first
+    path('api/auth/', include('djoser.urls')),  # Djoser fallback
     path('api/auth/', include('djoser.urls.jwt')),
+    path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
