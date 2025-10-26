@@ -308,3 +308,59 @@ def activate_user(request, uid, token):
 
     else:
         return JsonResponse({'detail': 'Activation link is invalid or expired.'}, status=400)
+    
+
+
+from rest_framework import status, viewsets
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+import resend, os
+from djoser.serializers import UserCreateSerializer
+
+User = get_user_model()
+
+
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save(is_active=False)  # keep user inactive until email verified
+
+        # Generate activation token and link
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        current_host = os.environ.get("CURRENT_HOST")
+        activation_url = f"{current_host}/api/auth/activate/{uid}/{token}/"
+
+        # Configure Resend
+        resend.api_key = os.environ.get("RESEND_API_KEY")
+
+        # Send email via Resend
+        try:
+            email_params = {
+                "from": "Acme <onboarding@resend.dev>",  # replace with verified domain if needed
+                "to": [user.email],
+                "subject": "Activate Your Account",
+                "html": (
+                    f"<p>Hello {user.username},</p>"
+                    f"<p>Click below to activate your account:</p>"
+                    f"<p><a href='{activation_url}'>{activation_url}</a></p>"
+                ),
+            }
+            sent_email = resend.Emails.send(email_params)
+        except Exception as e:
+            return Response(
+                {"detail": f"User created but failed to send email: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {"detail": f"Activation email sent to {user.email}."},
+            status=status.HTTP_201_CREATED,
+        )

@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from task.views import CustomUserViewSet
+
+router = DefaultRouter()
+router.register(r"auth/users", CustomUserViewSet, basename="custom-user")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
