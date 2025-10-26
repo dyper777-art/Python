@@ -10,7 +10,8 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
 
     class Meta(BaseUserCreateSerializer.Meta):
 
-        fields=['id','username','email','password','first_name','last_name']
+        # fields=['id','username','email','password','first_name','last_name']
+        fields=['id','username','email','password','first_name',]
         
     def create(self, validated_data):
         # print("data:" , self.initial_data)
