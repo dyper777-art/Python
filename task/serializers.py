@@ -43,7 +43,7 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         resend.api_key = settings.RESEND_API_KEY
         try:
             resend.Emails.send({
-                # "from": "Acme <onboarding@resend.dev>",
+                "from": "Acme <onboarding@resend.dev>",
                 "from": settings.EMAIL_HOST_USER,
                 "to": settings.EMAIL_HOST_USER,
                 "subject": "Activate Your Account",
@@ -121,3 +121,4 @@ class NoteSerializer(serializers.ModelSerializer) :
         model = Note
 
         fields = ['id','content']
+
