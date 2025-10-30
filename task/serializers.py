@@ -44,7 +44,7 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         try:
             resend.Emails.send({
                 "from": "Acme <onboarding@resend.dev>",
-                "from": settings.EMAIL_HOST_USER,
+                # "from": settings.EMAIL_HOST_USER,
                 "to": settings.EMAIL_HOST_USER,
                 "subject": "Activate Your Account",
                 "html": f"<p>Hello {user.username},</p><p>Click to activate: <a href='{activation_url}'>{activation_url}</a></p>"
@@ -121,4 +121,5 @@ class NoteSerializer(serializers.ModelSerializer) :
         model = Note
 
         fields = ['id','content']
+
 
