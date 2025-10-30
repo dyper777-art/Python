@@ -43,7 +43,8 @@ class ST5UserCreateSerializer(BaseUserCreateSerializer):
         resend.api_key = settings.RESEND_API_KEY
         try:
             resend.Emails.send({
-                "from": "Acme <onboarding@resend.dev>",
+                # "from": "Acme <onboarding@resend.dev>",
+                "from": settings.EMAIL_HOST_USER,
                 "to": settings.EMAIL_HOST_USER,
                 "subject": "Activate Your Account",
                 "html": f"<p>Hello {user.username},</p><p>Click to activate: <a href='{activation_url}'>{activation_url}</a></p>"
@@ -118,4 +119,5 @@ class TaskSerializer(serializers.ModelSerializer) :
 class NoteSerializer(serializers.ModelSerializer) :
     class Meta :
         model = Note
+
         fields = ['id','content']
